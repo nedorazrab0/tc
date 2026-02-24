@@ -1,0 +1,35 @@
+#!/data/data/com.termux/files/usr/bin/env python3
+#
+# SPDX-License-Identifier: 0BSD
+"""Termux alarm clock."""
+
+from subprocess import run
+from time import sleep
+from schedule import run_pending, every
+
+def vibrate(duration: int) -> None:
+    pause = duration*1.5
+    repeats = int(12/pause)
+    cmd_duration = str(int(duration*1000))
+    for _ in range(repeats):
+        run(("termux-vibrate", "-f", "-d", cmd_duration))
+        sleep(pause)
+
+def alarm() -> None:
+    print("It is time")
+    repeats = 5
+    durations = (0.4, 1.6, 4, 1.6, 4)
+    for duration in durations*repeats:
+        vibrate(duration)
+
+def main() -> None:
+    alarm_time = input("Alarm time (HH:MM): ")
+    every().day.at(alarm_time).do(alarm)
+    run("termux-wake-lock")
+    print("The alarm is set")
+    while True:
+        run_pending()
+        sleep(30)
+
+if __name__ == "__main__":
+    main()
