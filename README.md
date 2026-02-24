@@ -1,0 +1,2 @@
+# tc
+termux alarm clock
