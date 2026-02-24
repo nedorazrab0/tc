@@ -7,7 +7,7 @@ from subprocess import run
 from time import sleep
 from schedule import run_pending, every
 
-def vibrate(duration: int) -> None:
+def vibrate(duration: float) -> None:
     pause = duration*1.5
     repeats = int(12/pause)
     cmd_duration = str(int(duration*1000))
@@ -18,7 +18,7 @@ def vibrate(duration: int) -> None:
 def alarm() -> None:
     print("It is time")
     repeats = 5
-    durations = (0.4, 1.6, 4, 1.6, 4)
+    durations = (0.4, 1.6, 4.0, 1.6, 4.0)
     for duration in durations*repeats:
         vibrate(duration)
 
