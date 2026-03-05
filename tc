@@ -17,12 +17,12 @@ def vibrate_pattern(pattern: tuple) -> None:
         vibrate(cmd_duration)
 
 def alarm() -> None:
-    print("It is time")
     pattern = (
         (0.08,)*64
         + (0.08, 0.08, 0.08, 0.08, 0.16, 0.16)*32
         + (0.8, 0.8, 0.8, 0.4, 0.4, 0.4, 3.2, 3.2)*8
     )
+    print("It is time")
     vibrate_pattern(pattern)
 
 def main() -> None:
