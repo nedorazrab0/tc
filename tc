@@ -1,35 +1,51 @@
 #!/data/data/com.termux/files/usr/bin/env python3
-#
 # SPDX-License-Identifier: 0BSD
 """Termux alarm clock."""
 
+from argparse import ArgumentParser
 from subprocess import run
 from time import sleep
 from schedule import run_pending, every
 
-def vibrate(duration: float) -> None:
-    pause = duration*1.5
-    repeats = int(12/pause)
-    cmd_duration = str(int(duration*1000))
-    for _ in range(repeats):
-        run(("termux-vibrate", "-f", "-d", cmd_duration))
-        sleep(pause)
+def vibrate(duration: str) -> None:
+    run(("termux-vibrate", "-f", "-d", duration))
+
+def vibrate_pattern(pattern: tuple) -> None:
+    for duration in pattern:
+        sleep(duration*1.5)
+        cmd_duration = str(int(duration*1000))
+        vibrate(cmd_duration)
 
 def alarm() -> None:
     print("It is time")
-    repeats = 5
-    durations = (0.4, 1.6, 4.0, 1.6, 4.0)
-    for duration in durations*repeats:
-        vibrate(duration)
+    pattern = (
+        (0.08,)*64
+        + (0.08, 0.08, 0.08, 0.08, 0.16, 0.16)*32
+        + (0.8, 0.8, 0.8, 0.4, 0.4, 0.4, 3.2, 3.2)*8
+    )
+    vibrate_pattern(pattern)
 
 def main() -> None:
-    alarm_time = input("Alarm time (HH:MM): ")
-    every().day.at(alarm_time).do(alarm)
+    parser = ArgumentParser(description="termux alarm clock")
+    parser.add_argument("-t", "--alarm_time", help="set the time")
+    parser.add_argument("-e", "--hourly", action="store_true",
+                        help="play the alarm hourly")
+    args = parser.parse_args()
+
+    on = every()
+    alarm_time = args.alarm_time
+    if args.hourly:
+        on.hour.at("06:00").do(alarm)
+    elif alarm_time:
+        on.day.at(alarm_time).do(alarm)
+    else:
+        parser.error("the alarm time is not set")
     run("termux-wake-lock")
+    vibrate("800")
     print("The alarm is set")
     while True:
         run_pending()
-        sleep(30)
+        sleep(60)
 
 if __name__ == "__main__":
     main()
