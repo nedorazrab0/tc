@@ -18,9 +18,8 @@ def vibrate_pattern(pattern: tuple) -> None:
 
 def alarm() -> None:
     pattern = (
-        (0.1,)*64
-        + (0.4, 0.4, 0.1, 0.1, 0.1, 0.1)*16
-        + (1.6, 1.6, 1.6, 0.4, 0.4, 0.4)*8
+        (0.2,)*64
+        + (0.8, 0.8, 0.8, 0.4, 0.4, 0.4)*8
     )
     print("It is time")
     vibrate_pattern(pattern)
@@ -41,7 +40,7 @@ def main() -> None:
     else:
         parser.error("the alarm time is not set")
     run("termux-wake-lock")
-    vibrate("1600")
+    vibrate("800")
     print("The alarm is set")
     while True:
         run_pending()
