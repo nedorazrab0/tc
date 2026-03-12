@@ -3,8 +3,9 @@
 """Termux alarm clock."""
 
 from argparse import ArgumentParser
+from time import sleep, ctime
 from subprocess import run
-from time import sleep
+from random import choices
 from schedule import run_pending, every
 
 def vibrate(duration: str) -> None:
@@ -12,16 +13,19 @@ def vibrate(duration: str) -> None:
 
 def vibrate_pattern(pattern: tuple) -> None:
     for duration in pattern:
-        cmd_duration = str(int(duration*1000))
+        cmd_duration = str(duration)
         vibrate(cmd_duration)
-        sleep(duration*1.5)
+        sleep(duration/1000 + 0.2)
+
+def print_time(text: str) -> None:
+    print(text, ctime())
 
 def alarm() -> None:
     pattern = (
-        (0.2,)*64
-        + (0.8, 0.8, 0.8, 0.4, 0.4, 0.4)*8
+        (100,)*32
+        + tuple(choices(range(200, 1001), k=64))
     )
-    print("It is time")
+    print_time("It is time")
     vibrate_pattern(pattern)
 
 def main() -> None:
@@ -40,11 +44,15 @@ def main() -> None:
     else:
         parser.error("the alarm time is not set")
     run("termux-wake-lock")
-    vibrate("800")
-    print("The alarm is set")
+    vibrate("600")
+    print_time("The alarm is set")
     while True:
-        run_pending()
-        sleep(60)
+        try:
+            run_pending()
+            sleep(30)
+        except KeyboardInterrupt:
+            print_time("Keyboard interrupt")
+            sleep(0.5)
 
 if __name__ == "__main__":
     main()
