@@ -2,57 +2,63 @@
 # SPDX-License-Identifier: 0BSD
 """Termux alarm clock."""
 
-from argparse import ArgumentParser
-from time import sleep, ctime
+from time import ctime, sleep
 from subprocess import run
 from random import choices
-from schedule import run_pending, every
+from sys import exit
+
+class MusicPlayer:
+    def __init__(self) -> None:
+        self.music_cmd = "termux-media-player"
+
+    def play(self) -> None:
+        set_volume("1")
+        run((self.music_cmd, "play", "./help-me-erin-alarm.ogg"))
+
+    def stop(self) -> None:
+        set_volume("0")
+        run((self.music_cmd, "stop"))
+
+player = MusicPlayer()
+
+def set_volume(volume_level: str) -> None:
+    run(("termux-volume", "music", volume_level))
+
+def wait_for_interupt(secs: float) -> None:
+    try:
+        sleep(secs)
+    except KeyboardInterrupt:
+        print_time("Отмена нахуй")
+        player.stop()
+        run("termux-wake-unlock")
+        exit(0)
 
 def vibrate(duration: str) -> None:
     run(("termux-vibrate", "-f", "-d", duration))
 
-def vibrate_pattern(pattern: tuple) -> None:
+def vibrate_pattern(pattern: list) -> None:
     for duration in pattern:
         cmd_duration = str(duration)
         vibrate(cmd_duration)
-        sleep(duration/1000 + 0.2)
-
-def print_time(text: str) -> None:
-    print(text, ctime())
+        wait_for_interupt(duration/1000 + 0.2)
 
 def alarm() -> None:
-    pattern = (
-        (100,)*32
-        + tuple(choices(range(200, 1001), k=64))
-    )
-    print_time("It is time")
+    print_time("Встаем залупа")
+    player.play()
+    pattern = choices(range(100, 801, 100), k=64)
     vibrate_pattern(pattern)
 
-def main() -> None:
-    parser = ArgumentParser(description="termux alarm clock")
-    parser.add_argument("-t", "--alarm_time", help="set the time")
-    parser.add_argument("-e", "--hourly", action="store_true",
-                        help="play the alarm hourly")
-    args = parser.parse_args()
+def print_time(text: str) -> None:
+    print("", text, "", ctime())
 
-    on = every()
-    alarm_time = args.alarm_time
-    if args.hourly:
-        on.hour.at("06:00").do(alarm)
-    elif alarm_time:
-        on.day.at(alarm_time).do(alarm)
-    else:
-        parser.error("the alarm time is not set")
+def main() -> None:
+    secs = float(input("How many minutes until the alarm "))*60
+    run(("termux-dialog", "confirm"))
     run("termux-wake-lock")
-    vibrate("600")
+    vibrate("800")
     print_time("The alarm is set")
-    while True:
-        try:
-            run_pending()
-            sleep(30)
-        except KeyboardInterrupt:
-            print_time("Keyboard interrupt")
-            sleep(0.5)
+    wait_for_interupt(secs)
+    alarm()
 
 if __name__ == "__main__":
     main()
