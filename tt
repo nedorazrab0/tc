@@ -83,7 +83,6 @@ def main() -> None:
         "-s", "--silent", action="store_true", help="Do not play music"
     )
     args = parser.parse_args()
-
     if not music.FILE.exists():
         raise FileNotFoundError(f"Place your music file at {music.FILE}")
 
