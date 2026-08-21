@@ -1,2 +1,3 @@
-# tc
-termux alarm clock
+# tt
+
+Termux alarm clock, requires termux-api
