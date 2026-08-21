@@ -60,7 +60,7 @@ def notify(mins: int, secs: int) -> None:
     run(["clear"], check=True)
     run(["termux-toast", str(mins)], check=True)
     repeats = 12 if mins > 99 else 16
-    for _ in range(16):
+    for _ in range(repeats):
         print(f"{choice(punctuation)}{mins}"*repeats)
         print(f"{mins}{choice(punctuation)}"*repeats)
     print("\nThe alarm is set on", ctime())
