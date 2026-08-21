@@ -49,8 +49,8 @@ def vibrate(duration: int) -> None:
     run(["termux-vibrate", "-f", "-d", str(duration)], check=True)
 
 
-def vibrate_random(k: int) -> None:
-    pattern = choices(range(100, 901, 200), k=k)
+def vibrate_random(repeats: int) -> None:
+    pattern = choices(range(100, 901, 200), k=repeats)
     for duration in pattern:
         vibrate(duration)
         sleep(duration/1000 + 0.2)
