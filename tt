@@ -56,15 +56,15 @@ def vibrate_random(k: int) -> None:
         sleep(duration/1000 + 0.2)
 
 
-def notify(mins: int, secs: int) -> None:
+def notify(minutes: int, seconds: int) -> None:
     run(["clear"], check=True)
-    run(["termux-toast", str(mins)], check=True)
-    repeats = 12 if mins > 99 else 16
+    run(["termux-toast", str(minutes)], check=True)
+    repeats = 12 if minutes > 99 else 16
     for _ in range(repeats):
-        print(f"{choice(punctuation)}{mins}"*repeats)
-        print(f"{mins}{choice(punctuation)}"*repeats)
+        print(f"{choice(punctuation)}{minutes}"*repeats)
+        print(f"{minutes}{choice(punctuation)}"*repeats)
     print("\nThe alarm is set on", ctime())
-    print("Wake up on", ctime(time() + secs) + "\n")
+    print("Wake up on", ctime(time() + seconds), "\n")
 
 
 def alarm(silent: bool) -> None:
@@ -86,15 +86,15 @@ def main() -> None:
     if not music.FILE.exists():
         raise FileNotFoundError(f"Place your music file at {music.FILE}")
 
-    mins = int(input("How many minutes until the alarm "))
-    secs = mins*60
-    if mins < 0:
+    minutes = int(input("How many minutes until the alarm "))
+    seconds = minutes*60
+    if minutes < 0:
         return
     old_volume = music.get_volume(find_max=False)
     try:
-        notify(mins, secs)
+        notify(minutes, seconds)
         run(["termux-wake-lock"], check=True)
-        sleep(secs)
+        sleep(seconds)
         alarm(args.silent)
     finally:
         music.stop()
