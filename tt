@@ -1,6 +1,6 @@
 #!/data/data/com.termux/files/usr/bin/env python3
 # SPDX-License-Identifier: 0BSD
-"""Termux alarm clock, requires termux-api"""
+"""Termux alarm clock."""
 
 from argparse import ArgumentParser
 from time import sleep, ctime, time
