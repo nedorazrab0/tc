@@ -1,3 +1,3 @@
-# tt
+# termux-alarm-clock
 
-Termux alarm clock, requires termux-api
+A lightweight python alarm clock CLI for termux using termux-api
