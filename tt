@@ -92,8 +92,8 @@ def main() -> None:
         return
     old_volume = music.get_volume(find_max=False)
     try:
-        notify(minutes, seconds)
         run(["termux-wake-lock"], check=True)
+        notify(minutes, seconds)
         sleep(seconds)
         alarm(args.silent)
     finally:
