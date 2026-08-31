@@ -24,7 +24,6 @@ class MusicPlayer:
         run([self.PLAYER_CMD, "play", self.FILE], check=True)
 
     def stop(self) -> None:
-        print("Stopped")
         run([self.PLAYER_CMD, "stop"], check=True)
 
     def set_volume(self, level: int) -> None:
@@ -96,6 +95,7 @@ def main() -> None:
         notify(minutes, seconds)
         sleep(seconds)
         alarm(args.silent)
+        print("Ended")
     finally:
         music.stop()
         music.set_volume(old_volume)
